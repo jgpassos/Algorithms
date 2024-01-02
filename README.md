@@ -2,7 +2,7 @@
 
 Algoritmos de ordenação Merge Sort e Selection Sort
 
-Os algoritmos implementações foram utilizados para fins comparativos executando com uma lista ordenada de 3 maneiras distintas (em ordem crescente, decrescente e números aleatórios) e com tamanhos distintos (10 elementos; 100 elementos; 1000 elementos), em cada cenário demonstrando o número de movimentações e o número de comparaçõesque os algoritmos realizaram.
+Os algoritmos implementados foram utilizados para fins comparativos executando com uma lista ordenada de 3 maneiras distintas (em ordem crescente, decrescente e números aleatórios) e com tamanhos distintos (10 elementos; 100 elementos; 1000 elementos), em cada cenário demonstrando o número de movimentações e o número de comparaçõesque os algoritmos realizaram.
 
 O que seria um algoritmo de ordenação?
 
