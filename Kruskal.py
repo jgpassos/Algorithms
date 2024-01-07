@@ -1,23 +1,63 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter import filedialog
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def main():
-    file_path = "fileGrafo.txt"
-    grafo = ler_grafo(file_path)
+    root = tk.Tk()
+    root.title("Leitor de Arquivo .txt")
 
-    if grafo is not None:
-      print("\nGrafo inicial: ")
-      imprime_grafo_inicial(grafo)
-      # Plotar o grafo inicial
-      # plotar_grafo(grafo, "Grafo Inicial")
-      
-      arvore_geradora_minima = algoritmo_kruskal(grafo)
-      
-      # Plotar a árvore geradora mínima
-      plotar_grafo(arvore_geradora_minima, "Árvore Geradora Mínima")
-    else:
-        print("Verifique se o arquivo existe e é um arquivo .txt")
+    botao_abrir = tk.Button(root, text="Abrir Arquivo", command=abrir_arquivo_interface)
+    botao_abrir.pack(pady=80, padx=80)
+
+    root.mainloop()
+
+def abrir_arquivo_interface():
+    file_path = filedialog.askopenfilename(filetypes=[("Arquivos de Texto", "*.txt")])
+
+    if file_path:
+        with open(file_path, 'r') as file:
+            grafo = ler_grafo(file_path)
+
+            if grafo is not None:
+                plotar_grafo(grafo, "Grafo Inicial")        
+                arvore_geradora_minima = algoritmo_kruskal(grafo)
+                plotar_grafo(arvore_geradora_minima, "Árvore Geradora Mínima")   
+            else:
+                print("Verifique se o arquivo existe e é um arquivo .txt")
+
+def ler_grafo(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            linhas = file.readlines()
+            tamanho = len(linhas)
+            grafo = np.zeros((tamanho, tamanho), dtype=int)
+
+            for i, linha in enumerate(linhas):
+              vertices = [int(v) for v in linha.split(";")[0].split(",")]
+              grafo[i, :len(vertices)] = vertices
+
+            return grafo
+    except IOError as e:
+        print(f"Erro ao ler o arquivo: {e}")
+        return None
+    
+def plotar_grafo(grafo, titulo):
+    G = nx.Graph()
+
+    for i in range(len(grafo)):
+        for j in range(len(grafo[0])):
+            if grafo[i][j] != 0:
+                G.add_edge(i, j, weight=grafo[i][j])
+
+    pos = nx.spring_layout(G)
+    labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw(G, pos, with_labels=True, font_weight='bold', node_size=700)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+    plt.title(titulo)
+    plt.show()
 
 def algoritmo_kruskal(grafo):
     arvore_geradora_minima = np.zeros_like(grafo)
@@ -59,22 +99,6 @@ def algoritmo_kruskal(grafo):
 
     return arvore_geradora_minima
 
-def ler_grafo(file_path):
-    try:
-        with open(file_path, 'r') as file:
-            linhas = file.readlines()
-            tamanho = len(linhas)
-            grafo = np.zeros((tamanho, tamanho), dtype=int)
-
-            for i, linha in enumerate(linhas):
-              vertices = [int(v) for v in linha.split(";")[0].split(",")]
-              grafo[i, :len(vertices)] = vertices
-
-            return grafo
-    except IOError as e:
-        print(f"Erro ao ler o arquivo: {e}")
-        return None
-
 def busca_profundidade(grafo, visitados, v_corrente, busca):
     visitados[v_corrente] = 1
     for c in range(len(grafo)):
@@ -85,21 +109,6 @@ def busca_profundidade(grafo, visitados, v_corrente, busca):
             if ret:
                 return True
     return False
-
-def plotar_grafo(grafo, titulo):
-  G = nx.Graph()
-
-  for i in range(len(grafo)):
-      for j in range(len(grafo[0])):
-          if grafo[i][j] != 0:
-              G.add_edge(i, j, weight=grafo[i][j])
-
-  pos = nx.spring_layout(G)
-  labels = nx.get_edge_attributes(G, 'weight')
-  nx.draw(G, pos, with_labels=True, font_weight='bold', node_size=700)
-  nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
-  plt.title(titulo)
-  plt.show()
 
 def imprime_grafo_inicial(grafo):
     for i in range(len(grafo)):
